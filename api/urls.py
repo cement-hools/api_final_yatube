@@ -5,7 +5,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 
-from .views import PostViewSet, CommentViewSet
+from .views import PostViewSet, CommentViewSet, GroupViewSet
 
 post_router = DefaultRouter()
 post_router.register('posts', PostViewSet, basename='posts')
@@ -13,10 +13,14 @@ post_router.register('posts', PostViewSet, basename='posts')
 comment_router = DefaultRouter()
 comment_router.register('comments', CommentViewSet, basename='comments')
 
+group_router = DefaultRouter()
+group_router.register('group', GroupViewSet, basename='group')
+
 urlpatterns = [
 
     path('v1/', include(post_router.urls)),
     path('v1/posts/<int:post_id>/', include(comment_router.urls)),
+    path('v1/', include(group_router.urls)),
 
 ]
 
