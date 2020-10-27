@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
 from rest_framework import viewsets
 
@@ -11,6 +12,9 @@ class PostViewSet(viewsets.ModelViewSet):
                           IsAuthorOrReadOnly,)
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['group',] 
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
