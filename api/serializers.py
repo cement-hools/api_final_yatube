@@ -1,8 +1,7 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from .models import Post, Comment, Group, Follow
-
-from django.contrib.auth import get_user_model
 
 User = get_user_model
 
@@ -24,9 +23,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'title',)
         model = Group
 
 

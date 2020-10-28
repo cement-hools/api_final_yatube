@@ -1,13 +1,11 @@
+from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, serializers, status, viewsets
 
 from .models import Post, Comment, Group, Follow
 from .permissions import IsAuthorOrReadOnly
-from .serializers import PostSerializer, CommentSerializer, GroupSerializer, FollowSerializer
-
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
+from .serializers import (PostSerializer, CommentSerializer, GroupSerializer,
+                          FollowSerializer)
 
 User = get_user_model()
 
@@ -19,7 +17,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['group',]
+    filterset_fields = ['group']
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -56,12 +54,11 @@ class FollowViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         following = User.objects.filter(
             username=self.request.data.get('following'))
-        print(following)
-        if not following.exists():
-            raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
-        if Follow.objects.filter(user=self.request.user,
-                                 following=following.first()).exists():
-            raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
-        if self.request.user.username == self.request.data.get('following'):
+        if (not following.exists()
+                or Follow.objects.filter(user=self.request.user,
+                                         following=following.first()).exists()
+                or self.request.user.username == self.request.data.get(
+                    'following')
+        ):
             raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
         serializer.save(user=self.request.user, following=following.first())
