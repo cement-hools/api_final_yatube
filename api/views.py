@@ -26,7 +26,6 @@ class PostViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,
                           IsAuthorOrReadOnly,)
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
@@ -53,12 +52,6 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         following = User.objects.filter(
-            username=self.request.data.get('following'))
-        if (not following.exists()
-                or Follow.objects.filter(user=self.request.user,
-                                         following=following.first()).exists()
-                or self.request.user.username == self.request.data.get(
-                    'following')
-        ):
-            raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
+            username=self.request.data.get('following')
+            )
         serializer.save(user=self.request.user, following=following.first())
