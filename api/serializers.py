@@ -7,31 +7,35 @@ User = get_user_model
 
 
 class PostSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date',)
+        exclude = ('group',)
         model = Post
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.username')
+    author = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
 
     class Meta:
-        fields = ('id', 'post', 'text', 'author', 'created',)
+        fields = '__all__'
         model = Comment
 
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'title',)
+        exclude = ('description',)
         model = Group
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.username')
-    following = serializers.ReadOnlyField(source='following.username')
+    user = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
+    following = serializers.SlugRelatedField(slug_field='username',
+                                          read_only=True)
 
     class Meta:
-        fields = ('user', 'following',)
+        exclude = ('id',)
         model = Follow
